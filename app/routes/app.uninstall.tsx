@@ -1,7 +1,6 @@
 import { json, type ActionFunctionArgs } from "@remix-run/node";
 import { verifyWebhook } from "../config/shopify.server";
-import { Session } from "../models/Session.model";
-import { AppData } from "../models/AppData.model";
+import { deleteAllShopData } from "../storage/memory.server";
 
 // This webhook is called when the app is uninstalled
 export async function action({ request }: ActionFunctionArgs) {
@@ -29,8 +28,7 @@ export async function action({ request }: ActionFunctionArgs) {
     }
 
     // Clean up all data for this shop
-    await Session.deleteMany({ shop });
-    await AppData.deleteMany({ shop });
+    deleteAllShopData(shop);
 
     console.log(`App uninstalled for shop: ${shop}. All data cleaned up.`);
 

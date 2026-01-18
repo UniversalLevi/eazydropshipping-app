@@ -23,13 +23,11 @@
     "@vercel/remix": "^2.16.7",
     "dotenv": "^16.4.1",
     "isbot": "^4.1.0",
-    "mongoose": "^8.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.6.0",
-    "@types/mongoose": "^5.11.97",
     "@types/node": "^20.11.5",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",

@@ -2,11 +2,16 @@ import "@shopify/shopify-api/adapters/node";
 import {
   shopifyApi,
   ApiVersion,
-  BillingInterval,
   LogSeverity,
 } from "@shopify/shopify-api";
-import { connectDB } from "./database.server";
-import { Session } from "../models/Session.model";
+import {
+  storeSession,
+  loadSession,
+  deleteSession,
+  deleteSessions,
+  findSessionsByShop,
+  type SessionData,
+} from "../storage/memory.server";
 
 // Ensure required environment variables are set
 const apiKey = process.env.SHOPIFY_API_KEY;
@@ -20,102 +25,61 @@ if (!apiKey || !apiSecret) {
   throw new Error("Missing required Shopify environment variables");
 }
 
-// Ensure MongoDB is connected before initializing Shopify
-connectDB().catch((error) => {
-  console.error("Failed to connect to MongoDB:", error);
-});
-
-// Session storage implementation using Mongoose (must be defined before shopify initialization)
+// Session storage implementation using in-memory storage
 const sessionStorageImpl = {
-  async storeSession(session: any) {
-    try {
-      await Session.findOneAndUpdate(
-        { shop: session.shop },
-        {
-          id: session.id,
-          shop: session.shop,
-          state: session.state || undefined,
-          scope: session.scope || undefined,
-          expires: session.expires || undefined,
-          accessToken: session.accessToken || "",
-          isOnline: session.isOnline || false,
-        },
-        {
-          upsert: true,
-          new: true,
-        }
-      );
-      return true;
-    } catch (error) {
-      console.error("Error storing session:", error);
-      return false;
-    }
+  async storeSession(session: any): Promise<boolean> {
+    return storeSession({
+      id: session.id,
+      shop: session.shop,
+      state: session.state || undefined,
+      scope: session.scope || undefined,
+      expires: session.expires || undefined,
+      accessToken: session.accessToken || "",
+      isOnline: session.isOnline || false,
+    });
   },
 
-  async loadSession(id: string) {
-    try {
-      const sessionData = await Session.findOne({ id });
+  async loadSession(id: string): Promise<SessionData | undefined> {
+    const sessionData = loadSession(id);
 
-      if (!sessionData) {
-        return undefined;
-      }
-
-      return {
-        id: sessionData.id,
-        shop: sessionData.shop,
-        state: sessionData.state || undefined,
-        scope: sessionData.scope || undefined,
-        expires: sessionData.expires || undefined,
-        accessToken: sessionData.accessToken,
-        isOnline: sessionData.isOnline,
-      };
-    } catch (error) {
-      console.error("Error loading session:", error);
+    if (!sessionData) {
       return undefined;
     }
+
+    return {
+      id: sessionData.id,
+      shop: sessionData.shop,
+      state: sessionData.state,
+      scope: sessionData.scope,
+      expires: sessionData.expires,
+      accessToken: sessionData.accessToken,
+      isOnline: sessionData.isOnline,
+      createdAt: sessionData.createdAt,
+      updatedAt: sessionData.updatedAt,
+    };
   },
 
-  async deleteSession(id: string) {
-    try {
-      await Session.deleteOne({ id });
-      return true;
-    } catch (error) {
-      console.error("Error deleting session:", error);
-      return false;
-    }
+  async deleteSession(id: string): Promise<boolean> {
+    return deleteSession(id);
   },
 
-  async deleteSessions(ids: string[]) {
-    try {
-      await Session.deleteMany({ id: { $in: ids } });
-      return true;
-    } catch (error) {
-      console.error("Error deleting sessions:", error);
-      return false;
-    }
+  async deleteSessions(ids: string[]): Promise<boolean> {
+    return deleteSessions(ids);
   },
 
-  async findSessionsByShop(shop: string) {
-    try {
-      // Only find sessions that have an accessToken (completed OAuth)
-      const sessions = await Session.find({ 
-        shop,
-        accessToken: { $exists: true, $ne: "" }
-      });
-
-      return sessions.map((session) => ({
-        id: session.id,
-        shop: session.shop,
-        state: session.state || undefined,
-        scope: session.scope || undefined,
-        expires: session.expires || undefined,
-        accessToken: session.accessToken,
-        isOnline: session.isOnline,
-      }));
-    } catch (error) {
-      console.error("Error finding sessions by shop:", error);
-      return [];
-    }
+  async findSessionsByShop(shop: string): Promise<SessionData[]> {
+    const sessions = findSessionsByShop(shop);
+    return sessions.map((session) => ({
+      id: session.id,
+      shop: session.shop,
+      state: session.state,
+      scope: session.scope,
+      expires: session.expires,
+      accessToken: session.accessToken,
+      isOnline: session.isOnline,
+      createdAt: session.createdAt,
+      updatedAt: session.updatedAt,
+    }));
   },
 };
 
@@ -128,7 +92,7 @@ export const shopify = shopifyApi({
   apiVersion: ApiVersion.July24,
   isEmbeddedApp: true,
   logger: {
-    level: LogSeverity.Warning, // Reduced logging level
+    level: LogSeverity.Warning,
     httpRequests: false,
   },
   sessionStorage: sessionStorageImpl,

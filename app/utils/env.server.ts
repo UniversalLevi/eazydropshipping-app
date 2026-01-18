@@ -20,9 +20,6 @@ export const env = {
   SHOPIFY_API_SECRET: getRequiredEnv("SHOPIFY_API_SECRET"),
   SCOPES: getEnv("SCOPES", "read_products").split(","),
   
-  // Database
-  DATABASE_URL: getRequiredEnv("DATABASE_URL"),
-  
   // App URLs
   APP_URL: getEnv("APP_URL", "http://localhost:3000"),
   HOST: getEnv("HOST", "localhost:3000"),
@@ -34,12 +31,10 @@ export const env = {
 };
 
 // Validate environment variables on module load
-// In production (Vercel), don't exit process - let it fail gracefully
 try {
   // This will throw if required vars are missing
   env.SHOPIFY_API_KEY;
   env.SHOPIFY_API_SECRET;
-  env.DATABASE_URL;
 } catch (error) {
   console.error("❌ Environment validation failed:");
   console.error(error);

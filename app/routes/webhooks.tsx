@@ -1,7 +1,6 @@
 import { json, type ActionFunctionArgs } from "@remix-run/node";
 import { verifyWebhook } from "../config/shopify.server";
-import { Session } from "../models/Session.model";
-import { AppData } from "../models/AppData.model";
+import { deleteAllShopData, deleteSessionsByShop, deleteAllAppData } from "../storage/memory.server";
 
 // Handle GDPR compliance webhooks:
 // - customers/data_request
@@ -56,11 +55,11 @@ export async function action({ request }: ActionFunctionArgs) {
         console.log(`Shop data redaction for shop: ${shop}`, data);
         
         // Delete all app data for this shop
-        await AppData.deleteMany({ shop });
+        deleteAllAppData(shop);
 
         // Note: Sessions might still be needed if app is reinstalled
         // Only delete if you want complete removal
-        await Session.deleteMany({ shop });
+        deleteSessionsByShop(shop);
 
         break;
 
