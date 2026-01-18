@@ -20,18 +20,19 @@
     "@shopify/polaris": "^13.9.5",
     "@shopify/polaris-icons": "^9.3.1",
     "@shopify/shopify-api": "^12.3.0",
+    "@vercel/remix": "^2.16.7",
     "dotenv": "^16.4.1",
-    "mongoose": "^8.0.3",
     "isbot": "^4.1.0",
+    "mongoose": "^8.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.6.0",
+    "@types/mongoose": "^5.11.97",
     "@types/node": "^20.11.5",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
-    "@types/mongoose": "^5.11.97",
     "concurrently": "^8.2.2",
     "typescript": "^5.3.3",
     "vite": "^5.0.11"
