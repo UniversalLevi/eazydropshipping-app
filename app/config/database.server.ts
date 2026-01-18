@@ -39,10 +39,12 @@ async function connectDB() {
   }
 }
 
-// Connect on module load
+// Connect on module load - but don't block startup if connection fails
+// Connection will be retried on first database operation
 if (process.env.NODE_ENV !== "test") {
   connectDB().catch((error) => {
     console.error("Failed to connect to MongoDB:", error);
+    // Don't throw - allow app to start and retry connection later
   });
 }
 

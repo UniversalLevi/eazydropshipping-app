@@ -34,6 +34,7 @@ export const env = {
 };
 
 // Validate environment variables on module load
+// In production (Vercel), don't exit process - let it fail gracefully
 try {
   // This will throw if required vars are missing
   env.SHOPIFY_API_KEY;
@@ -42,7 +43,10 @@ try {
 } catch (error) {
   console.error("❌ Environment validation failed:");
   console.error(error);
-  console.error("\n📝 Please check your .env file and ensure all required variables are set.");
-  console.error("💡 Copy .env.example to .env and fill in the values.");
-  process.exit(1);
+  console.error("\n📝 Please check your environment variables and ensure all required variables are set.");
+  if (process.env.NODE_ENV === "development") {
+    console.error("💡 Copy .env.example to .env and fill in the values.");
+    process.exit(1);
+  }
+  // In production, don't exit - let the app try to start and show error in UI
 }
