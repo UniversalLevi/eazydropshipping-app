@@ -144,47 +144,61 @@ export default function Index() {
 
   return (
     <AppLayout>
-      <Page
-        title="Welcome to Your Shopify App"
-        primaryAction={{
-          content: "Get Started",
-          onAction: () => {
-            console.log("Get started clicked");
-          },
-        }}
-      >
+      <Page title="Dashboard">
         <Layout>
           <Layout.Section>
-            <Banner status="info" title="App is successfully installed!">
-              <p>Your Shopify app is now connected and ready to use.</p>
+            <Banner status="success" title="App Successfully Installed!">
+              <p>Your Shopify app is now connected and ready to use. You can start managing your store operations.</p>
             </Banner>
           </Layout.Section>
 
           {shopInfo && (
             <Layout.Section>
               <Card>
-                <BlockStack gap="400">
+                <BlockStack gap="500">
                   <Text variant="headingMd" as="h2">
-                    Shop Information
+                    Store Information
                   </Text>
-                  <BlockStack gap="200">
-                    <Text as="p">
-                      <strong>Shop Name:</strong> {shopInfo.name}
-                    </Text>
-                    <Text as="p">
-                      <strong>Shop Domain:</strong> {shopInfo.domain}
-                    </Text>
-                    {shopInfo.email && (
-                      <Text as="p">
-                        <strong>Email:</strong> {shopInfo.email}
-                      </Text>
-                    )}
-                    {shopInfo.plan && (
-                      <Text as="p">
-                        <strong>Plan:</strong> {shopInfo.plan.displayName}
-                      </Text>
-                    )}
-                  </BlockStack>
+                  <Card sectioned>
+                    <BlockStack gap="300">
+                      <div>
+                        <Text variant="bodyMd" fontWeight="semibold" as="p">
+                          Shop Name
+                        </Text>
+                        <Text as="p" tone="subdued">
+                          {shopInfo.name}
+                        </Text>
+                      </div>
+                      <div>
+                        <Text variant="bodyMd" fontWeight="semibold" as="p">
+                          Shop Domain
+                        </Text>
+                        <Text as="p" tone="subdued">
+                          {shopInfo.domain}
+                        </Text>
+                      </div>
+                      {shopInfo.email && (
+                        <div>
+                          <Text variant="bodyMd" fontWeight="semibold" as="p">
+                            Email
+                          </Text>
+                          <Text as="p" tone="subdued">
+                            {shopInfo.email}
+                          </Text>
+                        </div>
+                      )}
+                      {shopInfo.plan && (
+                        <div>
+                          <Text variant="bodyMd" fontWeight="semibold" as="p">
+                            Plan
+                          </Text>
+                          <Text as="p" tone="subdued">
+                            {shopInfo.plan.displayName}
+                          </Text>
+                        </div>
+                      )}
+                    </BlockStack>
+                  </Card>
                 </BlockStack>
               </Card>
             </Layout.Section>
@@ -192,24 +206,26 @@ export default function Index() {
 
           <Layout.Section>
             <Card>
-                <BlockStack gap="400">
-                  <Text variant="headingMd" as="h2">
-                    Next Steps
-                  </Text>
-                  <BlockStack gap="200">
-                  <Text as="p">
-                    1. Customize this app to add your specific features
-                  </Text>
-                  <Text as="p">
-                    2. Configure webhooks for your app's needs
-                  </Text>
-                  <Text as="p">
-                    3. Add your app logic and business requirements
-                  </Text>
-                  <Text as="p">
-                    4. Test thoroughly before submitting to Shopify App Store
-                  </Text>
-                </BlockStack>
+              <BlockStack gap="500">
+                <Text variant="headingMd" as="h2">
+                  Getting Started
+                </Text>
+                <Card sectioned>
+                  <BlockStack gap="300">
+                    <Text as="p">
+                      <strong>1.</strong> Customize this app to add your specific features and functionality
+                    </Text>
+                    <Text as="p">
+                      <strong>2.</strong> Configure webhooks to handle events from your store
+                    </Text>
+                    <Text as="p">
+                      <strong>3.</strong> Implement your app logic and business requirements
+                    </Text>
+                    <Text as="p">
+                      <strong>4.</strong> Test thoroughly in development before submitting to the Shopify App Store
+                    </Text>
+                  </BlockStack>
+                </Card>
               </BlockStack>
             </Card>
           </Layout.Section>
